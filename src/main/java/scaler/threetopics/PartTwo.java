@@ -13,36 +13,22 @@ public class PartTwo {
         StringBuilder stringBuilder=new StringBuilder();
         Queue<Character> queue=new LinkedList<>();
         Map<Character,Integer> characterCount=new HashMap<>();
-        for(int i=97; i<97+26;i++){
-            characterCount.put((char)i,0);
-        }
         queue.add(A.charAt(0));
         characterCount.put(A.charAt(0),1);
         stringBuilder.append(A.charAt(0));
         for(int i=1;i<A.length();i++){
-
-            int freq=characterCount.get(A.charAt(i));
-            freq++;
-            characterCount.put(A.charAt(i),freq);
+            Character ch=A.charAt(i);
+            characterCount.put(ch, characterCount.getOrDefault(ch, 0) + 1);
+            if (characterCount.get(ch) == 1) {
+                queue.add(ch);
+            }
+            while(!queue.isEmpty() && characterCount.get(queue.peek())>1){
+                queue.poll();
+            }
             if(queue.isEmpty()){
-                stringBuilder.append(A.charAt(i));
-                queue.add(A.charAt(i));
+                stringBuilder.append("#");
             }
-            else{
-                if(!queue.isEmpty() && !queue.peek().equals(A.charAt(i))){
-                    stringBuilder.append(queue.peek());
-                    queue.add(A.charAt(i));
-                }
-                else{
-                    queue.poll();
-                    Character ch=queue.peek();
-                    while(!queue.isEmpty() && characterCount.get(queue.peek())!=1){
-                        queue.poll();
-                    }
-                    if(!queue.isEmpty())stringBuilder.append(queue.peek());
-                    else stringBuilder.append("#");
-                }
-            }
+            else stringBuilder.append(queue.peek());
         }
         return stringBuilder.toString();
     }
