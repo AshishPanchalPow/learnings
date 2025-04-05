@@ -18,7 +18,41 @@ public class PartThree {
         int N=preOrder.length;
         TreeNode rooty=constructTree(preOrder,0,N-1,inOrder,0,N-1);
         //verticalLevelOrderTraversal(rooty);
-        isBalancedBinaryTree(root);
+        //isBalancedBinaryTree(root);
+        Integer[] A={1, 2, 3, -1, -1, -1, -1};
+        Queue<Integer> queue=new LinkedList<>(Arrays.asList(A));
+        TreeNode x=deserialize(A);
+        System.out.println(x);
+    }
+    private static TreeNode deserialize(Integer[]A){
+        Queue<TreeNode> queue=new LinkedList<>();
+        int idx=1;
+        TreeNode root=new TreeNode(A[0]);
+        queue.add(root);
+        while (idx <A.length){
+            TreeNode temp=queue.poll();
+            if(temp ==null){
+                continue;
+            }
+            else{
+                if(A[idx]==-1) temp.left=null;
+                else {
+                    temp.left=new TreeNode(A[idx]);
+                    queue.add(temp.left);
+                }
+                idx++;
+                if(A[idx]==-1) temp.right=null;
+                else {
+                    temp.right=new TreeNode(A[idx]);
+                    queue.add(temp.right);
+                }
+                idx++;
+
+
+            }
+
+        }
+        return root;
     }
     private static int isBalancedBinaryTree(TreeNode root){
         if(root==null)return 0;
@@ -26,6 +60,36 @@ public class PartThree {
         int rHeight=isBalancedBinaryTree(root.right);
         System.out.println("For root node: "+root.val+" Left Height: "+lHeight+" Right Height: "+rHeight);
         return Math.max(lHeight,rHeight)+1;
+    }
+    private static int[] solve(TreeNode A){
+        ArrayList<Integer> ans=new ArrayList<>();
+        Queue<TreeNode> queue=new LinkedList<>();
+        queue.add(A);
+        while (!queue.isEmpty()){
+            TreeNode pop=queue.poll();
+            if(pop.val!=-1){
+                ans.add(pop.val);
+                if (pop.left != null) {
+                    queue.add(pop.left);
+                }
+                else{
+                    queue.add(new TreeNode(-1));
+                }
+                if (pop.right != null) {
+                    queue.add(pop.right);
+                }
+                else{
+                    queue.add(new TreeNode(-1));
+                }
+            }
+            else{
+                ans.add(pop.val);
+                //queue.poll();
+            }
+        }
+        int[] result=new int[ans.size()];
+        for(int i=0; i<ans.size();i++) result[i]=ans.get(i);
+        return result;
     }
     private static void verticalLevelOrderTraversal(TreeNode root){
         Queue<Pair> queue=new LinkedList<>();
