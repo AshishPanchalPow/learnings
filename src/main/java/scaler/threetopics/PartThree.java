@@ -1,24 +1,71 @@
 package scaler.threetopics;
 
+import java.util.*;
+
 public class PartThree {
     public static void main(String[] args) {
         TreeNode root=new TreeNode(1);
         root.left=new TreeNode(2);
-        root.left.left=new TreeNode(3);
-        root.left.right=new TreeNode(4);
-        root.left.right.left=new TreeNode(5);
-        root.right=new TreeNode(6);
+        root.left.left=new TreeNode(4);
+        root.left.right=new TreeNode(5);
+        root.left.left.left=new TreeNode(6);
+        root.right=new TreeNode(3);
         root.right.right=new TreeNode(7);
-        root.right.right.left=new TreeNode(8);
-        root.right.right.right=new TreeNode(9);
-        inOrderTraversal(root);
-        int[] preOrder={8,6,2,11,16,10,12,4,14,18,9,15};
+        root.right.right.right=new TreeNode(8);
+        //inOrderTraversal(root);
+        int[] preOrder={8,6,2,11,16,10  ,12,4,14,18,9,15};
         int[] inOrder={11,2,16,6,10,12,8,14,18,4,9,15};
-//        int[] preOrder={8,6,14};
-//        int[] inOrder={6,8,14};
         int N=preOrder.length;
         TreeNode rooty=constructTree(preOrder,0,N-1,inOrder,0,N-1);
-        System.out.println(rooty);
+        //verticalLevelOrderTraversal(rooty);
+        isBalancedBinaryTree(root);
+    }
+    private static int isBalancedBinaryTree(TreeNode root){
+        if(root==null)return 0;
+        int lHeight=isBalancedBinaryTree(root.left);
+        int rHeight=isBalancedBinaryTree(root.right);
+        System.out.println("For root node: "+root.val+" Left Height: "+lHeight+" Right Height: "+rHeight);
+        return Math.max(lHeight,rHeight)+1;
+    }
+    private static void verticalLevelOrderTraversal(TreeNode root){
+        Queue<Pair> queue=new LinkedList<>();
+        queue.add(new Pair(0, root));
+        HashMap<Integer, List<Integer>> map=new HashMap<>();
+        while(!queue.isEmpty()){
+            Pair pair=queue.poll();
+            if(pair.treeNode.left !=null){
+                queue.add(new Pair(pair.index-1, pair.treeNode.left));
+            }
+            if(pair.treeNode.right !=null){
+                queue.add(new Pair(pair.index+1, pair.treeNode.right));
+            }
+            if(map.containsKey(pair.index)){
+                List<Integer> existing = map.get(pair.index);
+                existing.add(pair.treeNode.val);
+                map.put(pair.index, existing);
+            }
+            else {
+                List<Integer> existing=new ArrayList<>();
+                existing.add(pair.treeNode.val);
+                map.put(pair.index, existing);
+            }
+        }
+        System.out.println(map);
+    }
+    private static void levelOrderTraversal(TreeNode root){
+        Queue<TreeNode> queue=new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()){
+            int size=queue.size();
+            for(int i=0;i<size;i++){
+                TreeNode popped=queue.poll();
+                if(i==0)  System.out.print(popped.val+" ");
+                if(popped.left !=null) queue.add(popped.left);
+                if(popped.right !=null) queue.add(popped.right);
+            }
+            System.out.println();
+        }
+        System.out.println("Done");
     }
     private static TreeNode constructTree(int[] preOrder, int ps, int pe, int[] inOrder, int is, int ie){
         if(ps>pe){
@@ -55,5 +102,13 @@ class TreeNode{
         this.val=val;
         left=null;
         right=null;
+    }
+}
+class Pair{
+    int index;
+    TreeNode treeNode;
+    Pair(int index, TreeNode treeNode){
+        this.index=index;
+        this.treeNode=treeNode;
     }
 }
