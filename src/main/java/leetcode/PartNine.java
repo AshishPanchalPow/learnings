@@ -1,20 +1,97 @@
 package leetcode;
 
+import com.sun.source.tree.Tree;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class PartNine {
+    int globalAns=0;
+    int count=0;
     public static void main(String[] args) {
-        TreeNode root=new TreeNode(236);
-        root.left=new TreeNode(104);
-        root.left.right=new TreeNode(227);
-        root.right=new TreeNode(701);
-        root.right.right=new TreeNode(911);
-        List<Integer> path=new ArrayList<>();
-        System.out.println(_getMinimumDifference(root,path));
+        TreeNode root=new TreeNode(0);
+        root.left=new TreeNode(-5);
+        root.left.right=new TreeNode(-3);
+        root.left.right.left=new TreeNode(-4);
+        root.left.right.right=new TreeNode(-1);
+        root.left.left=new TreeNode(-10);
+        System.out.println(maxVal(root.left));
 
+    }
+    public void kthSmallest(TreeNode root, int k) {
+        if(root==null){
+            return;
+        }
+        kthSmallest(root.left,k);
+        count++;
+        if(count==k){
+            globalAns=root.val;
+        }
+        kthSmallest(root.right,k);
+    }
+    public TreeNode deleteNode(TreeNode root, int key) {
+        if(root==null){
+            return null;
+        }
+        if(root.val>key){
+            root.left=deleteNode(root.left,key);
+        }
+        else if(root.val<key){
+            root.right=deleteNode(root.right,key);
+        }
+        else {
+            if(root.left==null && root.right==null){
+                return null;
+            }
+            else if(root.left==null && root.right !=null){
+                return root.right;
+            }
+            else if(root.right==null && root.left !=null){
+                return root.left;
+            }
+            else{
+                //
+                int val=maxVal(root.left);
+                root.val=val;
+                return deleteNode(root.left,val);
+            }
+        }
+        return root;
+    }
+    private static int maxVal(TreeNode root){
+        int maxVal=root.val;
+        while(root !=null){
+            if(root.right==null){
+                root=root.left;
+            }
+            else {
+                root=root.right;
+                maxVal=Math.max(maxVal,root.val);
+            }
+        }
+        return maxVal;
+    }
+    public TreeNode balanceBST(TreeNode root) {
+        List<Integer> path=getPath(root);
+        return sortedArrayToBST(path,0,path.size()-1);
+    }
+    public List<Integer> getPath(TreeNode root){
+        List<Integer> path=new ArrayList<>();
+        _getMinimumDifference(root,path);
+        return path;
+    }
+    public static TreeNode sortedArrayToBST(List<Integer> path, int start, int end) {
+        if(start>end) return null;
+        if(start==end){
+            return new TreeNode(path.get(start));
+        }
+        int mid=(start+end)/2;
+        TreeNode root=new TreeNode(path.get(mid));
+        root.left=sortedArrayToBST(path,start,mid-1);
+        root.right=sortedArrayToBST(path,mid+1,end);
+        return root;
     }
     public static int getMinimumDifference(TreeNode root) {
         int minDiff=Integer.MAX_VALUE;
